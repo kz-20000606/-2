@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>単元別：計算の工夫トレーニング</title>
+    <title>学年別：計算の工夫マスター（ランダム版）</title>
     <style>
         :root { --primary: #4a90e2; --success: #28a745; --error: #dc3545; --bg: #f4f7f9; }
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        h1 { text-align: center; color: var(--primary); font-size: 1.3rem; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
-        .grade-section { margin-bottom: 25px; }
-        .grade-title { font-weight: bold; font-size: 1rem; color: #555; margin-bottom: 10px; padding-left: 5px; border-left: 4px solid #aaa; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #333; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); font-size: 1.3rem; margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        .grade-section { margin-bottom: 20px; }
+        .grade-title { font-weight: bold; font-size: 1rem; color: #555; margin-bottom: 10px; padding-left: 5px; border-left: 4px solid var(--primary); }
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .menu-btn { padding: 15px 10px; font-size: 0.95rem; background: white; border: 1.5px solid var(--primary); color: var(--primary); border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; line-height: 1.3; }
+        .menu-btn { padding: 15px 5px; font-size: 0.9rem; background: white; border: 1.5px solid var(--primary); color: var(--primary); border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
         .menu-btn:hover { background: var(--primary); color: white; }
         .progress-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .progress { font-size: 0.9rem; color: #666; font-weight: bold; }
-        .back-to-menu { padding: 6px 12px; font-size: 0.8rem; background: #f0f0f0; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; color: #333; }
+        .back-to-menu { padding: 6px 12px; font-size: 0.8rem; background: #f0f0f0; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; }
         .question { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px; line-height: 1.6; border-left: 5px solid var(--primary); }
         .options { display: grid; gap: 10px; }
         .opt-btn { padding: 15px; border: 2px solid #eee; border-radius: 10px; background: white; font-size: 1rem; cursor: pointer; text-align: left; }
@@ -38,26 +38,24 @@
         <div class="grade-section">
             <div class="grade-title">中学1年生</div>
             <div class="menu-grid">
-                <button class="menu-btn" onclick="startQuiz('g1_fraction')">分数・小数の変換<br>（0.125など）</button>
-                <button class="menu-btn" onclick="startQuiz('g1_distributive')">分配法則の工夫<br>（1.11×100など）</button>
+                <button class="menu-btn" onclick="startQuiz('g1')">中1総合パック<br>（小数・分配法則）</button>
             </div>
         </div>
 
         <div class="grade-section">
             <div class="grade-title">中学2年生</div>
             <div class="menu-grid">
-                <button class="menu-btn" onclick="startQuiz('g2_substitution')">式の値の工夫<br>（代入の前に整理）</button>
-                <button class="menu-btn" onclick="startQuiz('g2_equation')">等式の変形<br>（小数を消す工夫）</button>
+                <button class="menu-btn" onclick="startQuiz('g2')">中2総合パック<br>（等式の変形・式の値）</button>
             </div>
         </div>
 
         <div class="grade-section">
             <div class="grade-title">中学3年生</div>
             <div class="menu-grid">
-                <button class="menu-btn" onclick="startQuiz('g3_expansion')">展開公式の利用<br>（102²など）</button>
-                <button class="menu-btn" onclick="startQuiz('g3_factoring')">因数分解の利用<br>（2乗の差など）</button>
+                <button class="menu-btn" onclick="startQuiz('g3')">中3総合パック<br>（展開・因数分解）</button>
             </div>
         </div>
+        <p style="font-size: 0.8rem; color: #999; text-align: center;">※各パック20問以上からランダムで5問出題されます</p>
     </div>
 
     <div id="quiz-screen" class="hidden">
@@ -68,48 +66,83 @@
         <div class="question" id="q-text"></div>
         <div class="options" id="options"></div>
         <div id="feedback"></div>
-        <button id="next-btn" onclick="nextQuestion()">次の問題へ進む</button>
+        <button id="next-btn" onclick="nextQuestion()">次へ進む</button>
     </div>
 
     <div id="result-screen" class="hidden" style="text-align: center;">
         <h2 style="color: var(--success);">トレーニング完了！</h2>
-        <div id="result-text"></div>
-        <button class="menu-btn" style="width: 100%; margin-top:20px;" onclick="showMenu()">メニューに戻る</button>
+        <div id="result-text" style="font-size: 1.5rem; margin: 20px 0;"></div>
+        <button class="menu-btn" style="width: 100%;" onclick="showMenu()">もう一度挑戦する</button>
     </div>
 </div>
 
 <script>
-    const allPacks = {
-        // 中1: 分数・小数
-        g1_fraction: [
-            { q: "0.125 × 24 を計算しなさい。", opts: ["3", "4", "6"], ans: 0, hint: "0.125 = 1/8 なので、1/8 × 24 = 3 です。" },
-            { q: "0.25 × 36 を計算しなさい。", opts: ["8", "9", "12"], ans: 1, hint: "0.25 = 1/4 なので、1/4 × 36 = 9 です。" },
-            { q: "0.875 × 16 を計算しなさい。", opts: ["12", "14", "15"], ans: 1, hint: "0.875 = 7/8 なので、7/8 × 16 = 14 です。" }
+    const allQuestions = {
+        g1: [
+            { q: "0.125 × 24", opts: ["3", "4", "2.4"], ans: 0, hint: "0.125 = 1/8 なので 1/8 × 24 = 3" },
+            { q: "0.25 × 32", opts: ["4", "8", "16"], ans: 1, hint: "0.25 = 1/4 なので 1/4 × 32 = 8" },
+            { q: "0.75 × 16", opts: ["12", "8", "10"], ans: 0, hint: "0.75 = 3/4 なので 3/4 × 16 = 12" },
+            { q: "1.25 × 8", opts: ["8", "10", "12"], ans: 1, hint: "1.25 = 5/4 なので 5/4 × 8 = 10" },
+            { q: "1.11 × 31 + 1.11 × 69", opts: ["11.1", "111", "1110"], ans: 1, hint: "1.11 × (31+69) = 1.11 × 100" },
+            { q: "25 × 13 × 4", opts: ["130", "1300", "2600"], ans: 1, hint: "(25 × 4) × 13 = 100 × 13" },
+            { q: "3.14 × 7.5 + 3.14 × 2.5", opts: ["31.4", "314", "3.14"], ans: 0, hint: "3.14 × (7.5+2.5) = 31.4" },
+            { q: "0.375 × 16", opts: ["4", "6", "8"], ans: 1, hint: "0.375 = 3/8 なので 3/8 × 16 = 6" },
+            { q: "0.625 × 80", opts: ["50", "40", "60"], ans: 0, hint: "0.625 = 5/8 なので 5/8 × 80 = 50" },
+            { q: "9.9 × 13", opts: ["128.7", "117.7", "130.3"], ans: 0, hint: "(10 - 0.1) × 13 = 130 - 1.3" },
+            { q: "0.5 × 1.23 × 2", opts: ["1.23", "2.46", "12.3"], ans: 0, hint: "(0.5 × 2) × 1.23 = 1 × 1.23" },
+            { q: "125 × 7 × 8", opts: ["700", "7000", "5600"], ans: 1, hint: "(125 × 8) × 7 = 1000 × 7" },
+            { q: "3.14 × 1.5 - 3.14 × 0.5", opts: ["3.14", "31.4", "0.314"], ans: 0, hint: "3.14 × (1.5-0.5) = 3.14" },
+            { q: "45 × 101", opts: ["4545", "4501", "4555"], ans: 0, hint: "45 × (100+1) = 4500 + 45" },
+            { q: "0.2 × 1.5", opts: ["0.3", "3", "0.03"], ans: 0, hint: "2/10 × 15/10 = 30/100 = 0.3" },
+            { q: "12 × 3.14 + 18 × 3.14", opts: ["62.8", "94.2", "111"], ans: 1, hint: "(12+18) × 3.14 = 30 × 3.14" },
+            { q: "(-25) × 3.1 × (-4)", opts: ["310", "-310", "31"], ans: 0, hint: "(-25 × -4) × 3.1 = 100 × 3.1" },
+            { q: "0.8 × 12.5", opts: ["10", "1", "100"], ans: 0, hint: "8/10 × 125/10 = 1000/100 = 10" },
+            { q: "15 × 3.14 - 5 × 3.14", opts: ["31.4", "3.14", "314"], ans: 0, hint: "(15-5) × 3.14 = 31.4" },
+            { q: "0.125 × 800", opts: ["100", "80", "125"], ans: 0, hint: "1/8 × 800 = 100" }
         ],
-        // 中1: 分配法則
-        g1_distributive: [
-            { q: "1.11 × 31 + 1.11 × 69 を計算しなさい。", opts: ["11.1", "111", "1110"], ans: 1, hint: "1.11 × (31+69) = 1.11 × 100 = 111 です。" },
-            { q: "25 × 17 × 4 を計算しなさい。", opts: ["170", "1700", "425"], ans: 1, hint: "(25 × 4) × 17 = 100 × 17 = 1700 です。" },
-            { q: "3.14 × 15.8 - 3.14 × 5.8 を計算しなさい。", opts: ["3.14", "31.4", "314"], ans: 1, hint: "3.14 × (15.8 - 5.8) = 3.14 × 10 = 31.4 です。" }
+        g2: [
+            { q: "x=12, y=-6 のとき (2x+2y)÷2 の値", opts: ["6", "12", "18"], ans: 0, hint: "x+y = 12-6 = 6" },
+            { q: "a=1/2 のとき 4(a+3)-2(a+6) の値", opts: ["1", "2", "3"], ans: 0, hint: "整理すると 2a。 2 × 1/2 = 1" },
+            { q: "0.1x + 0.2y = 1 をxについて解く", opts: ["x=10-2y", "x=1-0.2y", "x=10-y"], ans: 0, hint: "全体10倍: x+2y=10" },
+            { q: "24 × 15 + 24 × 35", opts: ["1200", "2400", "120"], ans: 0, hint: "24 × (15+35) = 24 × 50" },
+            { q: "a=1/3, b=1/2 のとき 6(a+b)", opts: ["5", "1", "6"], ans: 0, hint: "6a + 6b = 2 + 3 = 5" },
+            { q: "x=55 のとき x²-5x を x(x-5) で計算", opts: ["2750", "3000", "2500"], ans: 0, hint: "55 × 50 = 2750" },
+            { q: "y=2x-4 をxについて解く", opts: ["x=(y+4)/2", "x=y/2+4", "x=y-2"], ans: 0, hint: "2x=y+4 より x=(y+4)/2" },
+            { q: "a=10, b=5 のとき (a²b)÷ab", opts: ["5", "10", "2"], ans: 1, hint: "整理すると a なので 10" },
+            { q: "3x - y = 6 をyについて解く", opts: ["y=3x-6", "y=-3x+6", "y=3x+6"], ans: 0, hint: "y = 3x - 6" },
+            { q: "m=50, n=2 のとき m²÷(mn)", opts: ["25", "50", "100"], ans: 0, hint: "m/n = 50/2 = 25" },
+            { q: "x+y=10, x-y=4 のとき x²-y² の値", opts: ["14", "40", "140"], ans: 1, hint: "(x+y)(x-y) = 10 × 4 = 40" },
+            { q: "0.5x - 0.3y = 1.5 を10倍して整理", opts: ["5x-3y=15", "x-y=3", "5x-3y=1.5"], ans: 0, hint: "各項を10倍します" },
+            { q: "a=15, b=5 のとき a²-3ab+2ab", opts: ["150", "225", "15"], ans: 0, hint: "a(a-b) = 15(15-5) = 150" },
+            { q: "V=Sh をhについて解く", opts: ["h=V/S", "h=VS", "h=S/V"], ans: 0, hint: "両辺をSで割ります" },
+            { q: "x=2.5 のとき 4x+2", opts: ["10", "12", "14"], ans: 1, hint: "4×2.5 + 2 = 10 + 2 = 12" },
+            { q: "2(x+3y) - (2x-y)", opts: ["7y", "5y", "4x+5y"], ans: 0, hint: "2x+6y-2x+y = 7y" },
+            { q: "x=20, y=1/4 のとき 8xy", opts: ["40", "20", "160"], ans: 0, hint: "8×20×1/4 = 2×20 = 40" },
+            { q: "l=2πr をrについて解く", opts: ["r=l/2π", "r=2πl", "r=l/π"], ans: 0, hint: "両辺を2πで割ります" },
+            { q: "a=3.14, r=10 のとき 2r × a", opts: ["62.8", "31.4", "628"], ans: 0, hint: "2×10×3.14 = 62.8" },
+            { q: "1.2x + 0.8x", opts: ["2x", "20x", "1.28x"], ans: 0, hint: "(1.2+0.8)x = 2x" }
         ],
-        // 中2: 代入の工夫
-        g2_substitution: [
-            { q: "x=15, y=-5 のとき、(x+y)+(x-y) の値を求めなさい。", opts: ["10", "20", "30"], ans: 2, hint: "式を整理すると 2x になります。 2 × 15 = 30 です。" },
-            { q: "a=1/2 のとき、4(a+3) - 2(a+6) の値を求めなさい。", opts: ["1", "2", "3"], ans: 0, hint: "式を整理すると 2a になります。 2 × 1/2 = 1 です。" }
-        ],
-        // 中2: 等式の変形
-        g2_equation: [
-            { q: "0.1x + 0.2y = 1 をxについて解きなさい。", opts: ["x = 10 - 2y", "x = 1 - 0.2y", "x = 10 - y"], ans: 0, hint: "まず全体を10倍して小数を消します。 x + 2y = 10 より x = 10 - 2y です。" }
-        ],
-        // 中3: 展開公式
-        g3_expansion: [
-            { q: "102² を工夫して計算しなさい。", opts: ["10204", "10404", "10004"], ans: 1, hint: "(100+2)² = 10000 + 400 + 4 = 10404 です。" },
-            { q: "49 × 51 を工夫して計算しなさい。", opts: ["2491", "2499", "2501"], ans: 1, hint: "(50-1)(50+1) = 2500 - 1 = 2499 です。" }
-        ],
-        // 中3: 因数分解
-        g3_factoring: [
-            { q: "75² - 25² を計算しなさい。", opts: ["2500", "5000", "5625"], ans: 1, hint: "(75+25)(75-25) = 100 × 50 = 5000 です。" },
-            { q: "x=18 のとき、x² + 4x + 4 の値を求めなさい。", opts: ["324", "400", "441"], ans: 1, hint: "(x+2)² に因数分解します。 (18+2)² = 20² = 400 です。" }
+        g3: [
+            { q: "102²", opts: ["10204", "10404", "10004"], ans: 1, hint: "(100+2)² = 10000+400+4" },
+            { q: "98²", opts: ["9604", "9600", "9804"], ans: 0, hint: "(100-2)² = 10000-400+4" },
+            { q: "57² - 43²", opts: ["1400", "140", "1000"], ans: 0, hint: "(57+43)(57-43) = 100×14" },
+            { q: "19 × 21", opts: ["399", "401", "391"], ans: 0, hint: "(20-1)(20+1) = 400-1" },
+            { q: "x=17 のとき x²+6x+9", opts: ["400", "391", "289"], ans: 0, hint: "(x+3)² = 20² = 400" },
+            { q: "49 × 51", opts: ["2499", "2501", "2401"], ans: 0, hint: "(50-1)(50+1) = 2500-1" },
+            { q: "7.5² - 2.5²", opts: ["50", "56.25", "45"], ans: 0, hint: "(7.5+2.5)(7.5-2.5) = 10×5" },
+            { q: "103 × 97", opts: ["9991", "10009", "9999"], ans: 0, hint: "(100+3)(100-3) = 10000-9" },
+            { q: "x=95 のとき x²+10x+25", opts: ["10000", "9025", "9500"], ans: 0, hint: "(x+5)² = 100² = 10000" },
+            { q: "64² - 36²", opts: ["2800", "3000", "2500"], ans: 0, hint: "(64+36)(64-36) = 100×28" },
+            { q: "20.1 × 19.9", opts: ["399.99", "400.01", "399.91"], ans: 0, hint: "(20+0.1)(20-0.1) = 400-0.01" },
+            { q: "x=102, y=98 のとき x²-y²", opts: ["400", "800", "1000"], ans: 1, hint: "(x+y)(x-y) = 200×4 = 800" },
+            { q: "101²", opts: ["10201", "10101", "10202"], ans: 0, hint: "(100+1)² = 10000+200+1" },
+            { q: "x=47, y=3 のとき x²+2xy+y²", opts: ["2500", "2209", "2400"], ans: 0, hint: "(x+y)² = 50² = 2500" },
+            { q: "91 × 89", opts: ["8099", "8101", "8091"], ans: 0, hint: "(90+1)(90-1) = 8100-1" },
+            { q: "5.5² - 4.5²", opts: ["10", "11", "9"], ans: 0, hint: "(5.5+4.5)(5.5-4.5) = 10×1" },
+            { q: "x=25 のとき x²-10x+25", opts: ["400", "625", "0"], ans: 0, hint: "(x-5)² = 20² = 400" },
+            { q: "105 × 95", opts: ["9975", "10025", "9925"], ans: 0, hint: "(100+5)(100-5) = 10000-25" },
+            { q: "x=13, y=7 のとき (x+y)² - 4xy", opts: ["36", "100", "49"], ans: 0, hint: "(x-y)² と変形できる。 (13-7)² = 36" },
+            { q: "41²", opts: ["1681", "1601", "1641"], ans: 0, hint: "(40+1)² = 1600+80+1" }
         ]
     };
 
@@ -117,16 +150,17 @@
     let currentIdx = 0;
     let score = 0;
 
-    window.onload = showMenu;
-
     function showMenu() {
         document.getElementById('menu-screen').classList.remove('hidden');
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.add('hidden');
     }
 
-    function startQuiz(packKey) {
-        currentPack = allPacks[packKey];
+    function startQuiz(gradeKey) {
+        // 20問の中から5問をランダムに選んでシャッフル
+        const all = [...allQuestions[gradeKey]];
+        currentPack = all.sort(() => Math.random() - 0.5).slice(0, 5);
+        
         currentIdx = 0;
         score = 0;
         document.getElementById('menu-screen').classList.add('hidden');
@@ -135,14 +169,12 @@
     }
 
     function confirmBack() {
-        if(confirm("メニューに戻りますか？")) {
-            showMenu();
-        }
+        if(confirm("メニューに戻りますか？")) showMenu();
     }
 
     function loadQuestion() {
         const data = currentPack[currentIdx];
-        document.getElementById('progress').innerText = `問題 ${currentIdx + 1} / ${currentPack.length}`;
+        document.getElementById('progress').innerText = `問題 ${currentIdx + 1} / 5`;
         document.getElementById('q-text').innerText = data.q;
         const optContainer = document.getElementById('options');
         optContainer.innerHTML = "";
@@ -169,26 +201,25 @@
             f.innerHTML = `<strong>正解！✨</strong><br>${data.hint}`;
         } else {
             f.className = 'feedback wrong';
-            f.innerHTML = `<strong>不正解...</strong><br>ヒント：${data.hint}`;
+            f.innerHTML = `<strong>不正解...</strong><br>解説：${data.hint}`;
+            buttons[idx].style.borderColor = "var(--error)";
+            buttons[data.ans].style.borderColor = "var(--success)";
         }
         document.getElementById('next-btn').style.display = 'block';
     }
 
     function nextQuestion() {
         currentIdx++;
-        if(currentIdx < currentPack.length) {
+        if(currentIdx < 5) {
             loadQuestion();
         } else {
-            showResult();
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-text').innerText = `スコア: ${score} / 5`;
         }
     }
 
-    function showResult() {
-        document.getElementById('quiz-screen').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('result-text').innerHTML = `スコア: <strong>${score} / ${currentPack.length}</strong>`;
-    }
+    window.onload = showMenu;
 </script>
-
 </body>
 </html>
