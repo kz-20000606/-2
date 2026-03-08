@@ -7,12 +7,15 @@
     <style>
         :root { --primary: #4a90e2; --success: #28a745; --error: #dc3545; --bg: #f4f7f9; }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--primary); font-size: 1.5rem; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        h1 { text-align: center; color: var(--primary); font-size: 1.4rem; margin-top: 0; }
         .menu-grid { display: grid; gap: 15px; margin-top: 20px; }
-        .menu-btn { padding: 20px; font-size: 1.1rem; background: white; border: 2px solid var(--primary); color: var(--primary); border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .menu-btn { padding: 20px; font-size: 1.1rem; background: white; border: 2px solid var(--primary); color: var(--primary); border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
         .menu-btn:hover { background: var(--primary); color: white; }
-        .progress { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
+        .progress-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .progress { font-size: 0.9rem; color: #666; }
+        .back-to-menu { padding: 5px 12px; font-size: 0.8rem; background: #eee; border: none; border-radius: 5px; cursor: pointer; color: #666; }
+        .back-to-menu:hover { background: #ddd; }
         .question { font-size: 1.25rem; font-weight: bold; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; line-height: 1.5; }
         .options { display: grid; gap: 10px; }
         .opt-btn { padding: 15px; border: 2px solid #eee; border-radius: 10px; background: white; font-size: 1rem; cursor: pointer; text-align: left; }
@@ -22,24 +25,28 @@
         .wrong { background: #fce8e8; border: 1px solid var(--error); color: #a71d2a; }
         #next-btn { margin-top: 20px; width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; }
         .hidden { display: none; }
+        .footer-note { text-align: center; font-size: 0.8rem; color: #999; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>計算の工夫トレーニング</h1>
-
     <div id="menu-screen">
-        <p>学習したいパックを選んでください：</p>
+        <h1>計算の工夫トレーニング</h1>
+        <p style="text-align: center;">学習したいパックを選んでください</p>
         <div class="menu-grid">
-            <button class="menu-btn" onclick="startQuiz('expansion')">パックA：展開公式の工夫</button>
+            <button class="menu-btn" onclick="startQuiz('expansion')">パックA：展開・因数分解</button>
             <button class="menu-btn" onclick="startQuiz('numbers')">パックB：数・分数の性質</button>
             <button class="menu-btn" onclick="startQuiz('pi')">パックC：3.14・共通因数</button>
         </div>
+        <div class="footer-note">高校入試対策：計算力を高めよう</div>
     </div>
 
     <div id="quiz-screen" class="hidden">
-        <div class="progress" id="progress"></div>
+        <div class="progress-container">
+            <div class="progress" id="progress"></div>
+            <button class="back-to-menu" onclick="confirmBack()">メニューに戻る</button>
+        </div>
         <div class="question" id="q-text"></div>
         <div class="options" id="options"></div>
         <div id="feedback"></div>
@@ -48,36 +55,40 @@
 
     <div id="result-screen" class="hidden" style="text-align: center;">
         <h2>パック完了！</h2>
-        <p>お疲れ様でした！この調子で他のパックにも挑戦しましょう。</p>
-        <button class="menu-btn" onclick="showMenu()">メニューに戻る</button>
+        <p>お疲れ様でした！<br>他のパックにも挑戦して計算を極めましょう。</p>
+        <button class="menu-btn" style="width: 100%;" onclick="showMenu()">メニューに戻る</button>
     </div>
 </div>
 
 <script>
-    // ジャンルごとの問題データ
     const allPacks = {
         expansion: [
-            { q: "102² を工夫して計算しなさい。", opts: ["10204", "10404", "10004"], ans: 1, hint: "(100+2)² を展開します。" },
-            { q: "99² を工夫して計算しなさい。", opts: ["9801", "9901", "9811"], ans: 0, hint: "(100-1)² を展開します。" },
-            { q: "57² - 43² を計算しなさい。", opts: ["1400", "140", "1000"], ans: 0, hint: "(57+43)(57-43) を利用します。" },
-            { q: "19 × 21 を計算しなさい。", opts: ["391", "399", "401"], ans: 1, hint: "(20-1)(20+1) を利用します。" }
-            // ここにあと6問追加可能
+            { q: "102² を工夫して計算しなさい。", opts: ["10204", "10404", "10004"], ans: 1, hint: "(100+2)² = 100² + 2×100×2 + 2²" },
+            { q: "99² を工夫して計算しなさい。", opts: ["9801", "9901", "9811"], ans: 0, hint: "(100-1)² = 100² - 2×100×1 + 1²" },
+            { q: "57² - 43² を計算しなさい。", opts: ["1400", "140", "1000"], ans: 0, hint: "a²-b² = (a+b)(a-b) = (57+43)(57-43)" },
+            { q: "19 × 21 を計算しなさい。", opts: ["391", "399", "401"], ans: 1, hint: "(20-1)(20+1) = 20² - 1²" },
+            { q: "103 × 97 を計算しなさい。", opts: ["9991", "9999", "10009"], ans: 0, hint: "(100+3)(100-3) = 100² - 3²" }
         ],
         numbers: [
-            { q: "0.75² × 16 を計算しなさい。", opts: ["9", "12", "16"], ans: 0, hint: "(3/4)² × 16 = 9/16 × 16 です。" },
-            { q: "1.25 × 32 を計算しなさい。", opts: ["36", "40", "44"], ans: 1, hint: "1.25 = 5/4 です。 5/4 × 32 = 40 です。" },
-            { q: "25 × 13 × 4 を計算しなさい。", opts: ["130", "1300", "2500"], ans: 1, hint: "25 × 4 = 100 を先に計算します。" },
-            { q: "0.125 × 16 を計算しなさい。", opts: ["1.5", "2", "2.5"], ans: 1, hint: "0.125 = 1/8 なので、1/8 × 16 = 2 です。" }
+            { q: "0.75² × 16 を計算しなさい。", opts: ["9", "12", "16"], ans: 0, hint: "0.75 = 3/4。 (3/4)² × 16 = 9/16 × 16" },
+            { q: "1.25 × 32 を計算しなさい。", opts: ["36", "40", "44"], ans: 1, hint: "1.25 = 5/4。 5/4 × 32 = 40" },
+            { q: "25 × 13 × 4 を計算しなさい。", opts: ["130", "1300", "2500"], ans: 1, hint: "25 × 4 = 100 を先に計算します" },
+            { q: "0.125 × 16 を計算しなさい。", opts: ["1.5", "2", "2.5"], ans: 1, hint: "0.125 = 1/8。 1/8 × 16 = 2" },
+            { q: "0.875 × 80 を計算しなさい。", opts: ["60", "70", "80"], ans: 1, hint: "0.875 = 7/8。 7/8 × 80 = 70" }
         ],
         pi: [
-            { q: "12×3.14 + 8×3.14 を計算しなさい。", opts: ["31.4", "62.8", "94.2"], ans: 1, hint: "(12+8) × 3.14 = 20 × 3.14 です。" },
-            { q: "3.14 × 75 - 3.14 × 25 を計算しなさい。", opts: ["157", "314", "15.7"], ans: 0, hint: "(75-25) × 3.14 = 50 × 3.14 です。" },
-            { q: "13×17 + 13×13 を計算しなさい。", opts: ["300", "390", "400"], ans: 1, hint: "13 × (17+13) = 13 × 30 です。" }
+            { q: "12×3.14 + 8×3.14 を計算しなさい。", opts: ["31.4", "62.8", "94.2"], ans: 1, hint: "(12+8) × 3.14 = 20 × 3.14" },
+            { q: "3.14 × 75 - 3.14 × 25 を計算しなさい。", opts: ["157", "314", "15.7"], ans: 0, hint: "(75-25) × 3.14 = 50 × 3.14" },
+            { q: "13×17 + 13×13 を計算しなさい。", opts: ["300", "390", "400"], ans: 1, hint: "13 × (17+13) = 13 × 30" },
+            { q: "3.14 × 12² - 3.14 × 8² を計算しなさい。", opts: ["251.2", "314", "31.4"], ans: 0, hint: "3.14(12²-8²) = 3.14(12+8)(12-8) = 3.14 × 20 × 4" }
         ]
     };
 
     let currentPack = [];
     let currentIdx = 0;
+
+    // 最初にメニューを表示
+    window.onload = showMenu;
 
     function showMenu() {
         document.getElementById('menu-screen').classList.remove('hidden');
@@ -91,6 +102,12 @@
         document.getElementById('menu-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
         loadQuestion();
+    }
+
+    function confirmBack() {
+        if(confirm("メニューに戻りますか？（現在の進み具合はリセットされます）")) {
+            showMenu();
+        }
     }
 
     function loadQuestion() {
@@ -123,7 +140,7 @@
 
         if(idx === data.ans) {
             f.className = 'feedback correct';
-            f.innerHTML = `<strong>正解！</strong><br>${data.hint}`;
+            f.innerHTML = `<strong>正解！</strong><br>解説：${data.hint}`;
         } else {
             f.className = 'feedback wrong';
             f.innerHTML = `<strong>不正解...</strong><br>ヒント：${data.hint}`;
