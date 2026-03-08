@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>計算の工夫：問題集パック</title>
+    <title>学年別：計算の工夫トレーニング</title>
     <style>
         :root { --primary: #4a90e2; --success: #28a745; --error: #dc3545; --bg: #f4f7f9; }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
         .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
         h1 { text-align: center; color: var(--primary); font-size: 1.4rem; margin-top: 0; }
         .menu-grid { display: grid; gap: 15px; margin-top: 20px; }
-        .menu-btn { padding: 20px; font-size: 1.1rem; background: white; border: 2px solid var(--primary); color: var(--primary); border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; }
+        .menu-btn { padding: 20px; font-size: 1.1rem; background: white; border: 2px solid var(--primary); color: var(--primary); border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; text-align: center; line-height: 1.4; }
+        .menu-btn span { display: block; font-size: 0.8rem; font-weight: normal; margin-top: 5px; }
         .menu-btn:hover { background: var(--primary); color: white; }
         .progress-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .progress { font-size: 0.9rem; color: #666; }
-        .back-to-menu { padding: 5px 12px; font-size: 0.8rem; background: #eee; border: none; border-radius: 5px; cursor: pointer; color: #666; }
-        .back-to-menu:hover { background: #ddd; }
-        .question { font-size: 1.25rem; font-weight: bold; margin-bottom: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px; line-height: 1.5; }
+        .progress { font-size: 0.9rem; color: #666; font-weight: bold; }
+        .back-to-menu { padding: 6px 12px; font-size: 0.8rem; background: #f0f0f0; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; color: #333; transition: 0.2s; }
+        .back-to-menu:hover { background: #e0e0e0; }
+        .question { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px; line-height: 1.6; border-left: 5px solid var(--primary); }
         .options { display: grid; gap: 10px; }
         .opt-btn { padding: 15px; border: 2px solid #eee; border-radius: 10px; background: white; font-size: 1rem; cursor: pointer; text-align: left; }
         .opt-btn:disabled { cursor: default; }
         #feedback { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; line-height: 1.6; }
         .correct { background: #e6f4ea; border: 1px solid var(--success); color: #1e7e34; }
         .wrong { background: #fce8e8; border: 1px solid var(--error); color: #a71d2a; }
-        #next-btn { margin-top: 20px; width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; }
+        #next-btn { margin-top: 20px; width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; font-size: 1rem; }
         .hidden { display: none; }
-        .footer-note { text-align: center; font-size: 0.8rem; color: #999; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -33,67 +33,77 @@
 <div class="container">
     <div id="menu-screen">
         <h1>計算の工夫トレーニング</h1>
-        <p style="text-align: center;">学習したいパックを選んでください</p>
+        <p style="text-align: center; color: #666;">学年を選んでスタート！</p>
         <div class="menu-grid">
-            <button class="menu-btn" onclick="startQuiz('expansion')">パックA：展開・因数分解</button>
-            <button class="menu-btn" onclick="startQuiz('numbers')">パックB：数・分数の性質</button>
-            <button class="menu-btn" onclick="startQuiz('pi')">パックC：3.14・共通因数</button>
+            <button class="menu-btn" onclick="startQuiz('grade1')">
+                【中1】正の数・負の数
+                <span>分数・小数の変換 / 分配法則</span>
+            </button>
+            <button class="menu-btn" onclick="startQuiz('grade2')">
+                【中2】式の計算
+                <span>等式の変形 / 式の値の工夫</span>
+            </button>
+            <button class="menu-btn" onclick="startQuiz('grade3')">
+                【中3】展開・因数分解
+                <span>展開公式 / 因数分解の利用</span>
+            </button>
         </div>
-        <div class="footer-note">高校入試対策：計算力を高めよう</div>
     </div>
 
     <div id="quiz-screen" class="hidden">
         <div class="progress-container">
             <div class="progress" id="progress"></div>
-            <button class="back-to-menu" onclick="confirmBack()">メニューに戻る</button>
+            <button class="back-to-menu" onclick="confirmBack()">🏠 メニューに戻る</button>
         </div>
         <div class="question" id="q-text"></div>
         <div class="options" id="options"></div>
         <div id="feedback"></div>
-        <button id="next-btn" onclick="nextQuestion()">次の問題へ</button>
+        <button id="next-btn" onclick="nextQuestion()">次の問題へ進む</button>
     </div>
 
     <div id="result-screen" class="hidden" style="text-align: center;">
-        <h2>パック完了！</h2>
-        <p>お疲れ様でした！<br>他のパックにも挑戦して計算を極めましょう。</p>
-        <button class="menu-btn" style="width: 100%;" onclick="showMenu()">メニューに戻る</button>
+        <h2 style="color: var(--success);">全問クリア！</h2>
+        <p id="result-text"></p>
+        <button class="menu-btn" style="width: 100%;" onclick="showMenu()">他の学年もやってみる</button>
     </div>
 </div>
 
 <script>
     const allPacks = {
-        expansion: [
-            { q: "102² を工夫して計算しなさい。", opts: ["10204", "10404", "10004"], ans: 1, hint: "(100+2)² = 100² + 2×100×2 + 2²" },
-            { q: "99² を工夫して計算しなさい。", opts: ["9801", "9901", "9811"], ans: 0, hint: "(100-1)² = 100² - 2×100×1 + 1²" },
-            { q: "57² - 43² を計算しなさい。", opts: ["1400", "140", "1000"], ans: 0, hint: "a²-b² = (a+b)(a-b) = (57+43)(57-43)" },
-            { q: "19 × 21 を計算しなさい。", opts: ["391", "399", "401"], ans: 1, hint: "(20-1)(20+1) = 20² - 1²" },
-            { q: "103 × 97 を計算しなさい。", opts: ["9991", "9999", "10009"], ans: 0, hint: "(100+3)(100-3) = 100² - 3²" }
+        grade1: [
+            { q: "0.125 × 32 を計算しなさい。", opts: ["4", "8", "0.4"], ans: 0, hint: "0.125は 1/8 です。 1/8 × 32 = 4 と計算できます。" },
+            { q: "1.11 × 31 + 1.11 × 69 を計算しなさい。", opts: ["11.1", "111", "1110"], ans: 1, hint: "共通な数 1.11 でまとめます。 1.11 × (31+69) = 1.11 × 100 = 111 です。" },
+            { q: "0.25 × 13 × 4 を計算しなさい。", opts: ["13", "26", "52"], ans: 0, hint: "0.25 × 4 = 1 なので、 1 × 13 = 13 です。" },
+            { q: "3.14 × 7.5 + 3.14 × 2.5 を計算しなさい。", opts: ["3.14", "31.4", "314"], ans: 1, hint: "3.14 × (7.5 + 2.5) = 3.14 × 10 = 31.4 です。" },
+            { q: "(-25) × 1.23 × (-4) を計算しなさい。", opts: ["-123", "123", "12.3"], ans: 1, hint: "(-25) × (-4) = 100 を先に計算すると 100 × 1.23 = 123 です。" }
         ],
-        numbers: [
-            { q: "0.75² × 16 を計算しなさい。", opts: ["9", "12", "16"], ans: 0, hint: "0.75 = 3/4。 (3/4)² × 16 = 9/16 × 16" },
-            { q: "1.25 × 32 を計算しなさい。", opts: ["36", "40", "44"], ans: 1, hint: "1.25 = 5/4。 5/4 × 32 = 40" },
-            { q: "25 × 13 × 4 を計算しなさい。", opts: ["130", "1300", "2500"], ans: 1, hint: "25 × 4 = 100 を先に計算します" },
-            { q: "0.125 × 16 を計算しなさい。", opts: ["1.5", "2", "2.5"], ans: 1, hint: "0.125 = 1/8。 1/8 × 16 = 2" },
-            { q: "0.875 × 80 を計算しなさい。", opts: ["60", "70", "80"], ans: 1, hint: "0.875 = 7/8。 7/8 × 80 = 70" }
+        grade2: [
+            { q: "a=12, b=-6 のとき、(4a + 2b) ÷ 2 の値を求めなさい。", opts: ["15", "18", "21"], ans: 1, hint: "先に式を簡単にします。 2a + b = 2(12) + (-6) = 24 - 6 = 18 です。" },
+            { q: "1.5x + 2.5y = 10 を、xについて解きなさい。", opts: ["x = (20 - 5y)/3", "x = 10 - 2.5y", "x = (10 - 2.5y)/1.5"], ans: 0, hint: "全体を2倍して小数を消すと 3x + 5y = 20、よって 3x = 20 - 5y となります。" },
+            { q: "24 × 15 + 24 × 35 を計算しなさい。", opts: ["120", "1200", "2400"], ans: 1, hint: "24 × (15+35) = 24 × 50 です。 24 × 50 = 12 × 100 = 1200 と工夫できます。" },
+            { q: "a=1/3, b=1/2 のとき、6(a + b) の値を求めなさい。", opts: ["5", "1", "6"], ans: 0, hint: "分配法則で 6a + 6b = 6(1/3) + 6(1/2) = 2 + 3 = 5 です。" },
+            { q: "x=55 のとき、x² - 5x を x(x-5) と変形して値を求めなさい。", opts: ["2500", "2750", "3000"], ans: 1, hint: "55 × (55-5) = 55 × 50 = 2750 です。" }
         ],
-        pi: [
-            { q: "12×3.14 + 8×3.14 を計算しなさい。", opts: ["31.4", "62.8", "94.2"], ans: 1, hint: "(12+8) × 3.14 = 20 × 3.14" },
-            { q: "3.14 × 75 - 3.14 × 25 を計算しなさい。", opts: ["157", "314", "15.7"], ans: 0, hint: "(75-25) × 3.14 = 50 × 3.14" },
-            { q: "13×17 + 13×13 を計算しなさい。", opts: ["300", "390", "400"], ans: 1, hint: "13 × (17+13) = 13 × 30" },
-            { q: "3.14 × 12² - 3.14 × 8² を計算しなさい。", opts: ["251.2", "314", "31.4"], ans: 0, hint: "3.14(12²-8²) = 3.14(12+8)(12-8) = 3.14 × 20 × 4" }
+        grade3: [
+            { q: "102² を展開公式 (a+b)² = a² + 2ab + b² を使って計算しなさい。", opts: ["10204", "10404", "10004"], ans: 1, hint: "100² + 2×100×2 + 2² = 10000 + 400 + 4 です。" },
+            { q: "57² - 43² を因数分解を利用して計算しなさい。", opts: ["140", "1400", "2800"], ans: 1, hint: "(57+43)(57-43) = 100 × 14 = 1400 です。" },
+            { q: "19 × 21 を (a-b)(a+b) = a² - b² を使って計算しなさい。", opts: ["391", "399", "401"], ans: 1, hint: "(20-1)(20+1) = 400 - 1 = 399 です。" },
+            { q: "x=17 のとき、x² + 6x + 9 の値を求めなさい。", opts: ["400", "391", "289"], ans: 0, hint: "(x+3)² に因数分解します。 (17+3)² = 20² = 400 です。" },
+            { q: "91 × 89 を工夫して計算しなさい。", opts: ["8091", "8101", "8099"], ans: 2, hint: "(90+1)(90-1) = 8100 - 1 = 8099 です。" }
         ]
     };
 
     let currentPack = [];
     let currentIdx = 0;
+    let score = 0;
 
-    // 最初にメニューを表示
     window.onload = showMenu;
 
     function showMenu() {
         document.getElementById('menu-screen').classList.remove('hidden');
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.add('hidden');
+        score = 0;
     }
 
     function startQuiz(packKey) {
@@ -105,7 +115,7 @@
     }
 
     function confirmBack() {
-        if(confirm("メニューに戻りますか？（現在の進み具合はリセットされます）")) {
+        if(confirm("メニューに戻りますか？\n（今の学習記録はリセットされます）")) {
             showMenu();
         }
     }
@@ -139,11 +149,16 @@
         f.style.display = 'block';
 
         if(idx === data.ans) {
+            score++;
             f.className = 'feedback correct';
-            f.innerHTML = `<strong>正解！</strong><br>解説：${data.hint}`;
+            f.innerHTML = `<strong>正解！✨</strong><br>${data.hint}`;
+            buttons[idx].style.borderColor = "var(--success)";
         } else {
             f.className = 'feedback wrong';
             f.innerHTML = `<strong>不正解...</strong><br>ヒント：${data.hint}`;
+            buttons[idx].style.borderColor = "var(--error)";
+            buttons[data.ans].style.borderColor = "var(--success)";
+            buttons[data.ans].style.borderStyle = "dashed";
         }
         document.getElementById('next-btn').style.display = 'block';
     }
@@ -153,9 +168,19 @@
         if(currentIdx < currentPack.length) {
             loadQuestion();
         } else {
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
+            showResult();
         }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('result-text').innerHTML = `
+            <div style="font-size: 2rem; font-weight: bold; color: var(--primary); margin: 20px 0;">
+                ${score} / ${currentPack.length}
+            </div>
+            <p>お疲れ様でした！計算の工夫は数学の武器になります。<br>繰り返し練習して、スピードを上げましょう！</p>
+        `;
     }
 </script>
 
