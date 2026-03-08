@@ -16,7 +16,7 @@
         #feedback { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; line-height: 1.6; }
         .correct { background: #e6f4ea; border: 1px solid var(--success); color: #1e7e34; }
         .wrong { background: #fce8e8; border: 1px solid var(--error); color: #a71d2a; }
-        #next-btn { margin-top: 20px; width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; }
+        #next-btn { margin-top: 20px; width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; text-align: center; }
     </style>
 </head>
 <body>
@@ -53,37 +53,4 @@
             data.opts.forEach((opt, i) => {
                 const btn = document.createElement('button');
                 btn.innerText = opt;
-                btn.onclick = () => check(i);
-                optContainer.appendChild(btn);
-            });
-            document.getElementById('feedback').style.display = 'none';
-            document.getElementById('next-btn').style.display = 'none';
-        }
-
-        function check(idx) {
-            const data = quizData[currentIdx];
-            const f = document.getElementById('feedback');
-            f.style.display = 'block';
-            if(idx === data.ans) {
-                f.className = 'feedback correct';
-                f.innerHTML = `<strong>正解！</strong><br>${data.hint}`;
-            } else {
-                f.className = 'feedback wrong';
-                f.innerHTML = `<strong>不正解...</strong><br>ヒント：${data.hint}`;
-            }
-            document.getElementById('next-btn').style.display = 'block';
-        }
-
-        function nextQuestion() {
-            currentIdx++;
-            if(currentIdx < quizData.length) {
-                loadQuestion();
-            } else {
-                document.querySelector('.container').innerHTML = "<h2>全問終了！</h2><p>お疲れ様でした。工夫の仕方はマスターできましたか？</p><button onclick='location.reload()'>最初から解き直す</button>";
-            }
-        }
-
-        loadQuestion();
-    </script>
-</body>
-</html>
+                btn.onclick = () => check(
