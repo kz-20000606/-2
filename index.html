@@ -5,41 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>高校入試：計算の工夫マスター</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        h1 { font-size: 1.2rem; color: #333; }
-        .question { font-size: 1.1rem; margin-bottom: 15px; font-weight: bold; }
-        button { display: block; width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; background: #fff; cursor: pointer; text-align: left; }
-        button:hover { background: #e9ecef; }
-        #feedback { margin-top: 15px; padding: 10px; display: none; border-radius: 5px; }
-        .correct { background: #d4edda; color: #155724; }
-        .wrong { background: #f8d7da; color: #721c24; }
+        :root { --primary: #4a90e2; --success: #28a745; --error: #dc3545; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f4f7f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .progress { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
+        .question { font-size: 1.25rem; font-weight: bold; margin-bottom: 20px; line-height: 1.5; }
+        .options { display: grid; gap: 10px; }
+        button { padding: 15px; border: 2px solid #eee; border-radius: 10px; background: white; font-size: 1rem; cursor: pointer; transition: all 0.2s; text-align: left; }
+        button:hover { border-color: var(--primary); background: #f0f7ff; }
+        #feedback { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; line-height: 1.6; }
+        .correct { background: #e6f4ea; border: 1px solid var(--success); color: #1e7e34; }
+        .wrong { background: #fce8e8; border: 1px solid var(--error); color: #a71d2a; }
+        #next-btn { margin-top: 20px; width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>計算の工夫 Q1</h1>
-        <div class="question" id="q-text">102² を工夫して計算しなさい。</div>
-        <div id="options">
-            <button onclick="check(false)">10204</button>
-            <button onclick="check(true)">10404</button>
-            <button onclick="check(false)">10004</button>
-        </div>
+    <div class="container">
+        <div class="progress" id="progress">第 1 問 / 10</div>
+        <div class="question" id="q-text">問題を読み込んでいます...</div>
+        <div class="options" id="options"></div>
         <div id="feedback"></div>
+        <button id="next-btn" onclick="nextQuestion()">次の問題へ</button>
     </div>
 
     <script>
-        function check(isCorrect) {
+        const quizData = [
+            { q: "102² を工夫して計算しなさい。", opts: ["10204", "10404", "10004"], ans: 1, hint: "(100+2)² = 100² + 2×100×2 + 2² と展開公式を利用しましょう。" },
+            { q: "0.75² × 16 を工夫して計算しなさい。", opts: ["12", "9", "16"], ans: 1, hint: "0.75 = 3/4 なので、(3/4)² × 16 = 9/16 × 16 = 9 となります。" },
+            { q: "57² - 43² を計算しなさい。", opts: ["1400", "140", "196"], ans: 0, hint: "a² - b² = (a+b)(a-b) を利用して、(57+43)(57-43) と考えます。" },
+            { q: "12×3.14 + 13×3.14 - 5×3.14 を計算しなさい。", opts: ["31.4", "62.8", "94.2"], ans: 1, hint: "(12+13-5) × 3.14 = 20 × 3.14 とまとめられます。" },
+            { q: "25 × 13 × 4 を工夫して計算しなさい。", opts: ["1300", "1200", "325"], ans: 0, hint: "25 × 4 = 100 を先に計算するのがコツです。" },
+            { q: "1.25⁴ × 8⁴ を計算しなさい。", opts: ["1000", "10000", "8000"], ans: 1, hint: "(1.25 × 8)⁴ = 10⁴ = 10000 です。" },
+            { q: "19 × 21 を計算しなさい。", opts: ["399", "401", "400"], ans: 0, hint: "(20-1)(20+1) = 20² - 1² = 399 です。" },
+            { q: "4.5² - 3.5² を計算しなさい。", opts: ["1", "8", "7"], ans: 1, hint: "(4.5 + 3.5)(4.5 - 3.5) = 8 × 1 = 8 です。" },
+            { q: "7.5² を計算しなさい。", opts: ["49.25", "56.25", "54.25"], ans: 1, hint: "一の位が5の数の2乗は、7×8=56 を書いて末尾に25をつける裏技があります。" },
+            { q: "99 × 13 を工夫して計算しなさい。", opts: ["1287", "1313", "1277"], ans: 0, hint: "(100 - 1) × 13 = 1300 - 13 と分配法則を使います。" }
+        ];
+
+        let currentIdx = 0;
+
+        function loadQuestion() {
+            const data = quizData[currentIdx];
+            document.getElementById('progress').innerText = `第 ${currentIdx + 1} 問 / ${quizData.length}`;
+            document.getElementById('q-text').innerText = data.q;
+            const optContainer = document.getElementById('options');
+            optContainer.innerHTML = "";
+            data.opts.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => check(i);
+                optContainer.appendChild(btn);
+            });
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function check(idx) {
+            const data = quizData[currentIdx];
             const f = document.getElementById('feedback');
             f.style.display = 'block';
-            if(isCorrect) {
+            if(idx === data.ans) {
                 f.className = 'feedback correct';
-                f.innerHTML = '<strong>正解！</strong><br>(100+2)² = 10000 + 400 + 4 と考えれば暗算できます。';
+                f.innerHTML = `<strong>正解！</strong><br>${data.hint}`;
             } else {
                 f.className = 'feedback wrong';
-                f.innerHTML = '<strong>惜しい！</strong><br>展開公式 (a+b)² = a² + 2ab + b² を思い出してみましょう。';
+                f.innerHTML = `<strong>不正解...</strong><br>ヒント：${data.hint}`;
+            }
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if(currentIdx < quizData.length) {
+                loadQuestion();
+            } else {
+                document.querySelector('.container').innerHTML = "<h2>全問終了！</h2><p>お疲れ様でした。工夫の仕方はマスターできましたか？</p><button onclick='location.reload()'>最初から解き直す</button>";
             }
         }
+
+        loadQuestion();
     </script>
 </body>
 </html>
